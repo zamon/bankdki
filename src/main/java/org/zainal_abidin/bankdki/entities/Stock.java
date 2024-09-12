@@ -22,29 +22,29 @@ import java.util.Map;
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idBarang;  // Id Barang (sequence)
+    private Long idBarang;
 
     @Column(nullable = false)
-    private String namaBarang;  // Nama Barang (string)
-
+    private String namaBarang;
+    
     @Column(nullable = false)
-    private int jumlahStokBarang;  // Jumlah Stok Barang (integer)
-
+    private int jumlahStokBarang;
+    
     @Column(nullable = false, unique = true)
-    private String nomorSeriBarang;  // Nomor Seri Barang (string)
-
+    private String nomorSeriBarang;
+    
     @Type(JsonBinaryType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, Object> additionalInfo;  // Additional Info (type JSONB)
-
-    private String gambarBarang;  // Gambar Barang (string)
-
+    private Map<String, Object> additionalInfo;
+    
+    private String gambarBarang;
+    
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();  // Created At (timestamp)
-
-    private Integer createdBy;  // Created By (integer)
-
-    private LocalDateTime updatedAt;  // Updated At (timestamp)
-
-    private Integer updatedBy;  // Updated By (integer)
+    private LocalDateTime createdAt = LocalDateTime.now();
+    
+    private Integer createdBy;
+    
+    private LocalDateTime updatedAt;
+    
+    private Integer updatedBy;
 }
