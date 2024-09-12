@@ -2,7 +2,7 @@
  *
  * @author Zainal Abidin
  */
-package org.zainal_abidin.bankdki.entity;
+package org.zainal_abidin.bankdki.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;

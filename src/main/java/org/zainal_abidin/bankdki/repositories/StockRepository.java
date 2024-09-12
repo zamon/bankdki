@@ -2,9 +2,9 @@
  *
  * @author Zainal Abidin
  */
-package org.zainal_abidin.bankdki.repository;
+package org.zainal_abidin.bankdki.repositories;
 
-import org.zainal_abidin.bankdki.entity.Stock;
+import org.zainal_abidin.bankdki.entities.Stock;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
