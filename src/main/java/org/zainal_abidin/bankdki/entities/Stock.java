@@ -15,18 +15,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
-@Table(name = "STOCK")
+@Table(name = "stock")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBarang;
 
     @Column(nullable = false)
@@ -38,9 +38,10 @@ public class Stock {
     @Column(nullable = false, unique = true)
     private String nomorSeriBarang;
     
-    @Type(JsonBinaryType.class)
-    @Column(columnDefinition = "clob")
-    private Map<String, Object> additionalInfo;
+    @Lob
+    @Column(columnDefinition = "CLOB")
+    //private Map<String, Object> additionalInfo;
+    private String additionalInfo;
     
     private String gambarBarang;
     

@@ -4,6 +4,7 @@
  */
 package org.zainal_abidin.bankdki.controllers;
 
+import jakarta.persistence.criteria.Path;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -11,8 +12,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import javax.print.attribute.standard.Media;
@@ -22,6 +29,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+import org.zainal_abidin.bankdki.dto.CreateStockDto;
 import org.zainal_abidin.bankdki.entities.Stock;
 import org.zainal_abidin.bankdki.services.StockService;
 
@@ -36,27 +45,55 @@ public class StockController {
         this.stockService = stockService;
     }
     
-    @RequestMapping(path = "/create-stock", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Stock> createStock(@RequestBody Stock stock, HttpServletRequest request) {
+    @PostMapping("/create-stock")
+    public ResponseEntity<String> createStock(
+            @RequestParam("nama_barang") String namaBarang,
+            @RequestParam("jumlah_stok_barang") int jumlahStokBarang,
+            @RequestParam("nomor_seri_barang") String nomorSeriBarang,
+            @RequestParam("additional_info") String additionalInfo,
+            @RequestPart("gambar_barang") MultipartFile gambarBarang,
+            HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
+
         log.info("%s accessing /api/stock/create-stock".formatted(request.getRemoteAddr()));
         
-        InputStream is;
-        try {
-            is = new BufferedInputStream(new FileInputStream(stock.getGambarBarang()));
-            String mimeType = URLConnection.guessContentTypeFromStream(is);
-            log.info(mimeType);
-        } catch (FileNotFoundException ex) {
-            log.error(ex);
-        } catch (IOException ex) {
-            log.error(ex);
+        CreateStockDto stockDto = new CreateStockDto();
+        stockDto.setNamaBarang(namaBarang);
+        stockDto.setJumlahStokBarang(jumlahStokBarang);
+        stockDto.setNomorSeriBarang(nomorSeriBarang);
+        stockDto.setAdditionalInfo(additionalInfo);
+        
+        String mimeType = gambarBarang.getContentType();
+        if (Objects.equals(mimeType, "image/jpeg") || Objects.equals(mimeType, "image/png")) {
+            String extension = mimeType.equals("image/jpeg") ? ".jpg" : ".png";
+
+            LocalDateTime now = LocalDateTime.now();
+            String timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(now);
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hash = md.digest(timestamp.getBytes());
+            StringBuilder md5Hash = new StringBuilder();
+            for (byte b : hash) {
+                md5Hash.append(String.format("%02x", b));
+            }
+
+            String newFileName = md5Hash + extension;
+
+            java.nio.file.Path uploadDir = Paths.get("uploads/");
+            java.nio.file.Path filePath = uploadDir.resolve(newFileName);
+            Files.copy(gambarBarang.getInputStream(), filePath);
+
+            stockDto.setGambarBarang(filePath.toString());
+        } else {
+            throw new IOException("File harus dalam format JPG atau PNG.");
         }
         
-        stock.setCreatedAt(LocalDateTime.MAX);
-        stock.setCreatedBy(5);
-        stock.setUpdatedAt(LocalDateTime.MAX);
-        stock.setUpdatedBy(5);
-        Stock saved = stockService.saveStock(stock);
-        return ResponseEntity.ok(saved);
+        stockDto.setCreatedAt(LocalDateTime.MAX);
+        stockDto.setCreatedBy(1);
+        stockDto.setUpdatedAt(LocalDateTime.MAX);
+        stockDto.setUpdatedBy(1);
+        Stock stock = stockService.saveStock(stockDto);
+        
+        return new ResponseEntity<>("Stock created successfully with ID: " + stock.getIdBarang(), HttpStatus.OK);
     }
     
     @GetMapping("/list-stock")
