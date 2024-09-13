@@ -1,23 +1,17 @@
 /**
  *
- * @author zainal
+ * @author Zainal Abidin
  */
 package org.zainal_abidin.bankdki.services;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.MessageDigest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.zainal_abidin.bankdki.dto.CreateStockDto;
+import org.zainal_abidin.bankdki.dto.UpdateStockDto;
 import org.zainal_abidin.bankdki.entities.Stock;
 import org.zainal_abidin.bankdki.repositories.StockRepository;
-
 
 @Service
 public class StockService {
@@ -61,9 +55,9 @@ public class StockService {
         }
     }
     
-    public Optional<Stock> updateStock(Long id, Stock updatedStock) {
+    public Optional<Stock> updateStock(UpdateStockDto updatedStock) {
         try {
-            Optional<Stock> existingProductOptional = stockRepository.findById(id);
+            Optional<Stock> existingProductOptional = stockRepository.findById(updatedStock.getIdBarang());
             if (existingProductOptional.isPresent()) {
                 Stock stock = existingProductOptional.get();
                 stock.setNamaBarang(updatedStock.getNamaBarang());
@@ -71,8 +65,6 @@ public class StockService {
                 stock.setNomorSeriBarang(updatedStock.getNomorSeriBarang());
                 stock.setAdditionalInfo(updatedStock.getAdditionalInfo());
                 stock.setGambarBarang(updatedStock.getGambarBarang());
-                stock.setCreatedAt(updatedStock.getCreatedAt());
-                stock.setCreatedBy(updatedStock.getCreatedBy());
                 stock.setUpdatedAt(updatedStock.getUpdatedAt());
                 stock.setUpdatedBy(updatedStock.getUpdatedBy());
                 Stock savedEntity = stockRepository.save(stock);
@@ -85,12 +77,8 @@ public class StockService {
         }
     }
     
-    public boolean deleteStock(Long id) {
-        try {
-            stockRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete stock: " + e.getMessage());
-        }
+    public void deleteStockById(Long idBarang) {
+        stockRepository.deleteById(idBarang);
     }
+
 }

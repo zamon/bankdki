@@ -10,14 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateStockDto {
+public class UpdateStockDto {
+    private Long idBarang;
     private String namaBarang;
     private Integer jumlahStokBarang;
     private String nomorSeriBarang;
     private String additionalInfo;
     private String gambarBarang;
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Integer createdBy;
     private Integer updatedBy;
 }

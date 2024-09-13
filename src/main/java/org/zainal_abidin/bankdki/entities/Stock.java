@@ -40,7 +40,6 @@ public class Stock {
     
     @Lob
     @Column(columnDefinition = "CLOB")
-    //private Map<String, Object> additionalInfo;
     private String additionalInfo;
     
     private String gambarBarang;
