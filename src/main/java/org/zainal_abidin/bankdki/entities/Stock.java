@@ -5,23 +5,28 @@
 package org.zainal_abidin.bankdki.entities;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Entity
-@Table(name = "stock")
+@Table(name = "STOCK")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long idBarang;
 
     @Column(nullable = false)
@@ -34,7 +39,7 @@ public class Stock {
     private String nomorSeriBarang;
     
     @Type(JsonBinaryType.class)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "clob")
     private Map<String, Object> additionalInfo;
     
     private String gambarBarang;
