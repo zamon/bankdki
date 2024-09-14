@@ -75,9 +75,9 @@ public class StockController {
             throw new IOException("File harus dalam format JPG atau PNG.");
         }
         
-        createDto.setCreatedAt(LocalDateTime.MAX);
+        createDto.setCreatedAt(LocalDateTime.now());
         createDto.setCreatedBy(1);
-        createDto.setUpdatedAt(LocalDateTime.MAX);
+        createDto.setUpdatedAt(LocalDateTime.now());
         createDto.setUpdatedBy(1);
         Stock stock = stockService.saveStock(createDto);
         
@@ -110,8 +110,7 @@ public class StockController {
     
     @GetMapping("/detail-stock/{stockId}")
     public ResponseEntity<DetailStockDto> detailStock(@PathVariable Long stockId, HttpServletRequest request) {
-        log.info("%s accessing /api/stock/detail-stock".formatted(request.getRemoteAddr()));
-        
+        log.info(String.format("%s accessing /api/stock/detail-stock/%d",request.getRemoteAddr(), stockId));
         Optional<Stock> stockOptional = stockService.fetchStockById(stockId);
 
         return stockOptional.map(stock -> {
@@ -139,7 +138,7 @@ public class StockController {
             @RequestParam("additional_info") String additionalInfo,
             @RequestPart("gambar_barang") MultipartFile gambarBarang, 
             HttpServletRequest request) {
-        log.info("%s accessing /api/stock/update-stock".formatted(request.getRemoteAddr()));
+        log.info(String.format("%s accessing /api/stock/update-stock with id %d",request.getRemoteAddr(), idBarang));
         ApiResponse apiResponse = new ApiResponse(200, "data berhasil diupdate");
         Optional<Stock> stockOptional = stockService.fetchStockById(idBarang);
         UpdateStockDto updateStockDto = new UpdateStockDto();
@@ -189,7 +188,7 @@ public class StockController {
         updateStockDto.setJumlahStokBarang(jumlahStokBarang);
         updateStockDto.setNomorSeriBarang(nomorSeriBarang);
         updateStockDto.setAdditionalInfo(additionalInfo);
-        updateStockDto.setUpdatedAt(LocalDateTime.MAX);
+        updateStockDto.setUpdatedAt(LocalDateTime.now());
         updateStockDto.setUpdatedBy(1);
         
         stockService.updateStock(updateStockDto);
@@ -201,7 +200,7 @@ public class StockController {
     public ResponseEntity<ApiResponse> deleteStock(
             @RequestParam("id_barang") Long idBarang, 
             HttpServletRequest request) {
-        log.info("%s accessing /api/stock/delete-stock".formatted(request.getRemoteAddr()));
+        log.info(String.format("%s accessing /api/stock/delete-stock with id %d",request.getRemoteAddr(), idBarang));
         ApiResponse apiResponse = new ApiResponse(200, "data berhasil dihapus");
         
         Optional<Stock> stockOptional = stockService.fetchStockById(idBarang);
@@ -228,7 +227,6 @@ public class StockController {
         }
 
         stockService.deleteStockById(idBarang);
-        log.info("Stock dengan ID: " + idBarang + " berhasil dihapus");
         
         return ResponseEntity.ok(apiResponse);
     }

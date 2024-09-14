@@ -15,7 +15,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BankdkiApplication {
     public static void main(String[] args) throws IOException {
         Path uploadDir = (Path) Paths.get("uploads/");
+        Path logDir = (Path) Paths.get("logs/");
         Files.createDirectories(uploadDir);
+        Files.createDirectories(logDir);
+        
         SpringApplication.run(BankdkiApplication.class, args);
     }
 }
