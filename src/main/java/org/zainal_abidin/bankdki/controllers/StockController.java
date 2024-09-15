@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import org.zainal_abidin.bankdki.dto.ApiResponse;
@@ -30,6 +29,9 @@ import org.zainal_abidin.bankdki.dto.ListStockDto;
 import org.zainal_abidin.bankdki.dto.UpdateStockDto;
 import org.zainal_abidin.bankdki.entities.Stock;
 import org.zainal_abidin.bankdki.services.StockService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/api/stock")
@@ -85,27 +87,16 @@ public class StockController {
     }
     
     @GetMapping("/list-stock")
-    public ResponseEntity<List<ListStockDto>> listStock(HttpServletRequest request) {
+    public ResponseEntity<Page<ListStockDto>> listStock(
+            @RequestParam(defaultValue = "0") int page, 
+            @RequestParam(defaultValue = "15") int size,
+            HttpServletRequest request) {
         log.info("%s accessing /api/stock/list-stock".formatted(request.getRemoteAddr()));
         
-        List<Stock> stocks = stockService.fetchAllStocks();
-
-        List<ListStockDto> listDto = stocks.stream().map(stock -> {
-            ListStockDto dto = new ListStockDto();
-            dto.setIdBarang(stock.getIdBarang());
-            dto.setNamaBarang(stock.getNamaBarang());
-            dto.setJumlahStokBarang(stock.getJumlahStokBarang());
-            dto.setNomorSeriBarang(stock.getNomorSeriBarang());
-            dto.setAdditionalInfo(stock.getAdditionalInfo());
-            dto.setGambarBarang(stock.getGambarBarang());
-            dto.setCreatedAt(stock.getCreatedAt().toString());
-            dto.setCreatedBy(stock.getCreatedBy());
-            dto.setUpdatedAt(stock.getUpdatedAt().toString());
-            dto.setUpdatedBy(stock.getUpdatedBy());
-            return dto;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(listDto);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ListStockDto> stockPage = stockService.fetchAllStocks(pageable);
+    
+        return ResponseEntity.ok(stockPage);
     }
     
     @GetMapping("/detail-stock/{stockId}")

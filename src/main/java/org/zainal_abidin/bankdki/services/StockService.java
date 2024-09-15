@@ -7,11 +7,14 @@ package org.zainal_abidin.bankdki.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.zainal_abidin.bankdki.dto.CreateStockDto;
 import org.zainal_abidin.bankdki.dto.UpdateStockDto;
 import org.zainal_abidin.bankdki.entities.Stock;
 import org.zainal_abidin.bankdki.repositories.StockRepository;
+import org.springframework.data.domain.Pageable;
+import org.zainal_abidin.bankdki.dto.ListStockDto;
 
 @Service
 public class StockService {
@@ -39,12 +42,21 @@ public class StockService {
         }
     }
     
-    public List<Stock> fetchAllStocks() {
-        try {
-            return stockRepository.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch all stocks: " + e.getMessage());
-        }
+    public Page<ListStockDto> fetchAllStocks(Pageable pageable) {
+        return stockRepository.findAll(pageable).map(stock -> {
+            ListStockDto dto = new ListStockDto();
+            dto.setIdBarang(stock.getIdBarang());
+            dto.setNamaBarang(stock.getNamaBarang());
+            dto.setJumlahStokBarang(stock.getJumlahStokBarang());
+            dto.setNomorSeriBarang(stock.getNomorSeriBarang());
+            dto.setAdditionalInfo(stock.getAdditionalInfo());
+            dto.setGambarBarang(stock.getGambarBarang());
+            dto.setCreatedAt(stock.getCreatedAt().toString());
+            dto.setCreatedBy(stock.getCreatedBy());
+            dto.setUpdatedAt(stock.getUpdatedAt().toString());
+            dto.setUpdatedBy(stock.getUpdatedBy());
+            return dto;
+        });
     }
     
     public Optional<Stock> fetchStockById(Long id) {
@@ -80,5 +92,4 @@ public class StockService {
     public void deleteStockById(Long idBarang) {
         stockRepository.deleteById(idBarang);
     }
-
 }
