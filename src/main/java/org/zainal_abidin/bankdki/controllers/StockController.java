@@ -49,6 +49,8 @@ public class StockController {
             @RequestParam("nomor_seri_barang") String nomorSeriBarang,
             @RequestParam("additional_info") String additionalInfo,
             @RequestPart("gambar_barang") MultipartFile gambarBarang,
+            @RequestPart("created_by") int createdBy,
+            @RequestPart("updated_by") int updatedBy,
             HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
 
         log.info("%s accessing /api/stock/create-stock".formatted(request.getRemoteAddr()));
@@ -76,9 +78,9 @@ public class StockController {
         }
         
         createDto.setCreatedAt(LocalDateTime.now());
-        createDto.setCreatedBy(1);
+        createDto.setCreatedBy(createdBy);
         createDto.setUpdatedAt(LocalDateTime.now());
-        createDto.setUpdatedBy(1);
+        createDto.setUpdatedBy(updatedBy);
         Stock stock = stockService.saveStock(createDto);
         
         return ResponseEntity.ok(apiResponse);
@@ -125,7 +127,8 @@ public class StockController {
             @RequestParam("jumlah_stok_barang") int jumlahStokBarang,
             @RequestParam("nomor_seri_barang") String nomorSeriBarang,
             @RequestParam("additional_info") String additionalInfo,
-            @RequestPart("gambar_barang") MultipartFile gambarBarang, 
+            @RequestPart("gambar_barang") MultipartFile gambarBarang,
+            @RequestPart("updated_by") int updatedBy,
             HttpServletRequest request) {
         log.info(String.format("%s accessing /api/stock/update-stock with id %d",request.getRemoteAddr(), idBarang));
         ApiResponse apiResponse = new ApiResponse(200, "data berhasil diupdate");
@@ -170,7 +173,6 @@ public class StockController {
                 return ResponseEntity.status(500).body(apiResponse);
             }
         }
-
         
         updateStockDto.setIdBarang(idBarang);
         updateStockDto.setNamaBarang(namaBarang);
@@ -178,7 +180,7 @@ public class StockController {
         updateStockDto.setNomorSeriBarang(nomorSeriBarang);
         updateStockDto.setAdditionalInfo(additionalInfo);
         updateStockDto.setUpdatedAt(LocalDateTime.now());
-        updateStockDto.setUpdatedBy(1);
+        updateStockDto.setUpdatedBy(updatedBy);
         
         stockService.updateStock(updateStockDto);
 
