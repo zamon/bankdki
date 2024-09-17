@@ -1,1 +1,1 @@
-./mvnw -e -X -Djava.net.preferIPv4Stack=true spring-boot:run
+./mvnw -e -X -Djava.net.preferIPv4Stack=true "-Dexec.args=-classpath %classpath org.zainal_abidin.bankdki.BankdkiApplication" -Dexec.executable=/Library/Java/JavaVirtualMachines/openjdk-22.0.jdk/Contents/Home/bin/java org.codehaus.mojo:exec-maven-plugin:3.0.0:exec
