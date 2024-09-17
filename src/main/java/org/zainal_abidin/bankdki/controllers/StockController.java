@@ -49,8 +49,8 @@ public class StockController {
             @RequestParam("nomor_seri_barang") String nomorSeriBarang,
             @RequestParam("additional_info") String additionalInfo,
             @RequestPart("gambar_barang") MultipartFile gambarBarang,
-            @RequestPart("created_by") int createdBy,
-            @RequestPart("updated_by") int updatedBy,
+            @RequestParam("created_by") int createdBy,
+            @RequestParam("updated_by") int updatedBy,
             HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
 
         log.info("%s accessing /api/stock/create-stock".formatted(request.getRemoteAddr()));
@@ -128,7 +128,7 @@ public class StockController {
             @RequestParam("nomor_seri_barang") String nomorSeriBarang,
             @RequestParam("additional_info") String additionalInfo,
             @RequestPart("gambar_barang") MultipartFile gambarBarang,
-            @RequestPart("updated_by") int updatedBy,
+            @RequestParam("updated_by") int updatedBy,
             HttpServletRequest request) {
         log.info(String.format("%s accessing /api/stock/update-stock with id %d",request.getRemoteAddr(), idBarang));
         ApiResponse apiResponse = new ApiResponse(200, "data berhasil diupdate");
